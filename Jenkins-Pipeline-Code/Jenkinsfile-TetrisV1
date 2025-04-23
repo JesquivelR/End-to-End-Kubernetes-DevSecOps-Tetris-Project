@@ -22,16 +22,22 @@ pipeline {
             steps {
                 dir('Tetris-V1') {
                     withSonarQubeEnv('sonar-server') {
-                        sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=TetrisVersion1.0 \
-                        -Dsonar.projectKey=TetrisVersion1.0 '''
+                        sh ''' 
+                            $SCANNER_HOME/bin/sonar-scanner \
+                            -Dsonar.projectName=TetrisVersion1.0 \
+                            -Dsonar.projectKey=TetrisVersion1.0 \
+                            -Dsonar.qualitygate.wait=true \
+                            -Dsonar.qualitygate.timeout=300 
+                        '''
                     }
                 }
             }
         }
+
         stage('Quality Check') {
             steps {
                 script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
+                    waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
                 }
             }
         }
