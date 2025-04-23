@@ -45,8 +45,12 @@ pipeline {
         stage('OWASP Dependency-Check Scan') {
             steps {
                 dir('Tetris-V1') {
-                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                    withEnv(['nvdApiKey=8e7cba0f-4595-4dad-b0cd-d638ae1d45e4']) {
+                        dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit',
+                                        odcInstallation: 'DP-Check',
+                                        nvdApiKey: "${env.nvdApiKey}"
+                        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                    }
                 }
             }
         }
